@@ -59,8 +59,8 @@
                 </div>-->
                 <div class="btn-group">
                     <button type="button" class="btn btn-primary" id="btnCustomer" >Save Customer</button>
-                    <button  type="button" class="btn btn-danger" id="btnCusDelete" form="customerForm">Remove</button>
-                    <button  type="button" class="btn btn-warning" id="btnUpdate" form="customerForm">Update</button>
+                    <button  type="button" class="btn btn-danger" id="btnCusDelete" >Remove</button>
+                    <button  type="button" class="btn btn-warning" id="btnUpdate" >Update</button>
                     <button type="button" class="btn btn-success" id="btnGetAll">Get All</button>
                     <button type="button" class="btn btn-danger" id="btn-clear1">Clear All</button>
                 </div>
@@ -73,7 +73,6 @@
                     <th>Customer ID</th>
                     <th>Customer Name</th>
                     <th>Customer Address</th>
-                    <th>Customer Salary</th>
                 </tr>
                 </thead>
                 <tbody id="tblCustomer">
@@ -90,7 +89,10 @@
 
 <script>
 
+
+    getAll();
 /*<!--    bind row function  -->*/
+
     function bindRowClickOnAction() {
         $("#tblCustomer>tr").click(function () {
 
@@ -104,6 +106,14 @@
 
         });
 
+    }
+
+/*<!--    clear row function  -->*/
+
+    function clearRow(id,name,address) {
+        $("#txtCustomerID").val(id);
+        $("#txtCustomerName").val(name);
+        $("#txtCustomerAddress").val(address);
     }
 
 <!--    get all function  -->
@@ -125,6 +135,7 @@
                     $("#tblCustomer").append(row);
                 }
                 bindRowClickOnAction();
+                clearRow("","","");
 
             },
             error: function(error){
@@ -140,8 +151,63 @@
     });
 
 
+<!--    Save function  -->
 
+$("#btnCustomer").click(function () {
 
+    let formData = $("#customerForm").serialize();
+    $.ajax({
+        url:"customer",
+        method:"post",
+        data:formData,
+        success:function (res) {
+            alert(
+                res.message
+            );
+            getAll();
+        }
+    });
+
+});
+
+<!--    Update function  -->
+$("#btnUpdate").click(function () {
+
+    let cusId = $("#txtCustomerID").val();
+    let cusName = $("#txtCustomerName").val();
+    let cusAddress = $("#txtCustomerAddress").val();
+
+    var customerDB={
+        id:cusId,
+        name:cusName,
+        address:cusAddress
+    }
+    $.ajax({
+        url:"customer",
+        method:"put",
+        data:JSON.stringify(customerDB),
+        contentType:"application/json",
+        success:function () {
+            getAll();
+        }
+    });
+
+});
+
+<!--    Delete function  -->
+
+    $("#btnCusDelete").click(function () {
+
+        let id=$("#txtCustomerID").val();
+        $.ajax({
+            url:"customer?id="+id,
+            method:"delete",
+            success:function () {
+                getAll();
+            }
+        });
+
+    });
 </script>
 </body>
 </html>
