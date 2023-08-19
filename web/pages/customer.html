@@ -187,8 +187,13 @@ $("#btnUpdate").click(function () {
         method:"put",
         data:JSON.stringify(customerDB),
         contentType:"application/json",
-        success:function () {
+        success:function (res) {
+
             getAll();
+
+            alert(
+                res.message
+            );
         }
     });
 
@@ -197,17 +202,20 @@ $("#btnUpdate").click(function () {
 <!--    Delete function  -->
 
     $("#btnCusDelete").click(function () {
-
-        let id=$("#txtCustomerID").val();
+        let id = $("#txtCustomerID").val();
         $.ajax({
-            url:"customer?id="+id,
-            method:"delete",
-            success:function () {
+            url: "customer?id=" + id,
+            method: 'delete',
+            success: function (res) {
                 getAll();
-            }
+                alert(
+                    res.message
+                );
+            },
         });
 
     });
+
 </script>
 </body>
 </html>
