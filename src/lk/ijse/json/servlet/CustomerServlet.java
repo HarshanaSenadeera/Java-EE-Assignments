@@ -106,6 +106,7 @@ public class CustomerServlet extends HttpServlet {
         String name = customerObject.getString("name");
         String address = customerObject.getString("address");
 
+        resp.addHeader("Content-Type", "application/json");
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/test3", "root", "1234");
@@ -119,7 +120,7 @@ public class CustomerServlet extends HttpServlet {
             if(b){
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("state", "OK");
-                objectBuilder.add("message", "Successfully Upadated.....");
+                objectBuilder.add("message", "Successfully Updated.....");
                 objectBuilder.add("Data", " ");
                 resp.getWriter().print(objectBuilder.build());
             }
@@ -147,6 +148,8 @@ public class CustomerServlet extends HttpServlet {
 
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
+
+        resp.addHeader("Content-Type", "application/json");
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/test3", "root", "1234");
@@ -161,9 +164,11 @@ public class CustomerServlet extends HttpServlet {
                 objectBuilder.add("message", "Successfully Deleted.....");
                 objectBuilder.add("Data", " ");
                 resp.getWriter().print(objectBuilder.build());
+            }else {
+                throw new RuntimeException("Can't Delete...!");
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
             JsonObjectBuilder response = Json.createObjectBuilder();
             response.add("state", "Error");
@@ -172,6 +177,12 @@ public class CustomerServlet extends HttpServlet {
             resp.setStatus(500);
             resp.getWriter().print(response.build());
 
+        }catch (ClassNotFoundException | SQLException e){
+            JsonObjectBuilder response = Json.createObjectBuilder();
+            response.add("state", "Error");
+            response.add("message", e.getLocalizedMessage());
+            response.add("data", "");
+            resp.getWriter().print(response.build());
         }
 
     }
