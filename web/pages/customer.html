@@ -75,7 +75,14 @@
                     <th>Customer Address</th>
                 </tr>
                 </thead>
+
+                <tr id="loader" style="display: none; text-align: center"  >
+                    <td colspan="4">
+                        <h1 style="color: red; font-family: Century">Loading.....!</h1>
+                    </td>
+                </tr>
                 <tbody id="tblCustomer">
+
 
                 </tbody>
             </table>
@@ -118,11 +125,12 @@
 
 <!--    get all function  -->
     function getAll() {
-
+        $("#loader").css('display','block');
         $("#tblCustomer").empty();
         $.ajax({
             url : "customer",
             success : function (customer) {
+                $("#loader").css('display','none');
                 for (let i in customer) {
                     let cus=customer[i];
                     let id=cus.id;
@@ -155,16 +163,21 @@
 
 $("#btnCustomer").click(function () {
 
+
     let formData = $("#customerForm").serialize();
     $.ajax({
         url:"customer",
         method:"post",
         data:formData,
         success:function (res) {
+
             alert(
                 res.message
             );
             getAll();
+        },
+        error:function (error) {
+            alert(JSON.parse(error.responseText).message)
         }
     });
 
@@ -189,12 +202,15 @@ $("#btnUpdate").click(function () {
         contentType:"application/json",
         success:function (res) {
 
-            getAll();
-
             alert(
                 res.message
             );
+            getAll();
+        },
+        error:function (error) {
+            alert(JSON.parse(error.responseText).message)
         }
+
     });
 
 });

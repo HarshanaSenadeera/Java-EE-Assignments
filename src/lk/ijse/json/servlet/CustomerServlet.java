@@ -70,17 +70,29 @@ public class CustomerServlet extends HttpServlet {
             if (pstm.executeUpdate() > 0) {
 
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                objectBuilder.add("state", "OK");
-                objectBuilder.add("message", "Successfully Added.....");
-                objectBuilder.add("Data", " ");
+                objectBuilder.add("state","Ok");
+                objectBuilder.add("message","Successfully Added....!");
+                objectBuilder.add("Data"," ");
                 resp.getWriter().print(objectBuilder.build());
+
             }
 
 
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+
+            JsonObjectBuilder error = Json.createObjectBuilder();
+            error.add("state","Error");
+            error.add("message",e.getLocalizedMessage());
+            error.add("Data"," ");
+            resp.setStatus(500);
+            resp.getWriter().print(error.build());
+
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            JsonObjectBuilder error = Json.createObjectBuilder();
+            error.add("state","Error");
+            error.add("message",e.getLocalizedMessage());
+            error.add("Data"," ");
+            resp.getWriter().print(error.build());
         }
     }
 
@@ -104,14 +116,30 @@ public class CustomerServlet extends HttpServlet {
             pstm.setObject(2,address);
             boolean b = pstm.executeUpdate() > 0;
 
-            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-            objectBuilder.add("state", "OK");
-            objectBuilder.add("message", "Successfully Upadated.....");
-            objectBuilder.add("Data", " ");
-            resp.getWriter().print(objectBuilder.build());
+            if(b){
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("state", "OK");
+                objectBuilder.add("message", "Successfully Upadated.....");
+                objectBuilder.add("Data", " ");
+                resp.getWriter().print(objectBuilder.build());
+            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        } catch (ClassNotFoundException e) {
+
+            JsonObjectBuilder error = Json.createObjectBuilder();
+            error.add("state","Error");
+            error.add("message",e.getLocalizedMessage());
+            error.add("Data"," ");
+            resp.getWriter().print(error.build());
+
+        } catch (SQLException e) {
+            JsonObjectBuilder error = Json.createObjectBuilder();
+            error.add("state","Error");
+            error.add("message",e.getLocalizedMessage());
+            error.add("Data"," ");
+            resp.setStatus(500);
+            resp.getWriter().print(error.build());
         }
 
     }
@@ -139,9 +167,9 @@ public class CustomerServlet extends HttpServlet {
             e.printStackTrace();
             JsonObjectBuilder response = Json.createObjectBuilder();
             response.add("state", "Error");
-            response.add("message", e.getMessage());
+            response.add("message", e.getLocalizedMessage());
             response.add("data", "");
-            resp.setStatus(400);
+            resp.setStatus(500);
             resp.getWriter().print(response.build());
 
         }
