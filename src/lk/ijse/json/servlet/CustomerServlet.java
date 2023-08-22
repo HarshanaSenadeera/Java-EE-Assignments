@@ -123,24 +123,26 @@ public class CustomerServlet extends HttpServlet {
                 objectBuilder.add("message", "Successfully Updated.....");
                 objectBuilder.add("Data", " ");
                 resp.getWriter().print(objectBuilder.build());
+            }else {
+                throw new RuntimeException("Can't Update...!");
             }
 
 
-        } catch (ClassNotFoundException e) {
-
-            JsonObjectBuilder error = Json.createObjectBuilder();
-            error.add("state","Error");
-            error.add("message",e.getLocalizedMessage());
-            error.add("Data"," ");
-            resp.getWriter().print(error.build());
-
-        } catch (SQLException e) {
-            JsonObjectBuilder error = Json.createObjectBuilder();
-            error.add("state","Error");
-            error.add("message",e.getLocalizedMessage());
-            error.add("Data"," ");
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            JsonObjectBuilder response = Json.createObjectBuilder();
+            response.add("state", "Error");
+            response.add("message", e.getLocalizedMessage());
+            response.add("data", "");
             resp.setStatus(500);
-            resp.getWriter().print(error.build());
+            resp.getWriter().print(response.build());
+
+        }catch (ClassNotFoundException | SQLException e){
+            JsonObjectBuilder response = Json.createObjectBuilder();
+            response.add("state", "Error");
+            response.add("message", e.getLocalizedMessage());
+            response.add("data", "");
+            resp.getWriter().print(response.build());
         }
 
     }
